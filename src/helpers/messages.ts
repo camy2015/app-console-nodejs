@@ -1,6 +1,6 @@
-require("colors");
+import("colors");
 
-const showMenu = () => {
+export const showMenu = () => {
   return new Promise((resolve) => {
     console.clear();
     console.log("=================".green);
@@ -20,15 +20,15 @@ const showMenu = () => {
       output: process.stdout,
     });
 
-    readline.question("Select an option: ", (opt) => {
+    readline.question("Select an option: ", (opt: string) => {
       readline.close();
       resolve(opt);
     });
   });
 };
 
-const pause = () => {
-  return new Promise((resolve) => {
+export const pause = () => {
+  return new Promise<void>((resolve) => {
     const readline = require("readline").createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -39,9 +39,4 @@ const pause = () => {
       resolve();
     });
   });
-};
-
-module.exports = {
-  showMenu,
-  pause,
 };

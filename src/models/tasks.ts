@@ -1,23 +1,29 @@
-const Task = require("./task");
-require("colors");
+import { Task } from "./task.ts";
+import colors from "colors";
 
-class Tasks {
-  _list = {};
+interface TasksInterface {
+  [key: string]: Task;
+}
+
+export class Tasks {
+  _list: TasksInterface;
 
   get listArray() {
-    const list = [];
+    const list: Task[] = [];
     Object.keys(this._list).forEach((key) => {
       const task = this._list[key];
-      list.push(task);
+      if (task) {
+        list.push(task);
+      }
     });
     return list;
   }
 
   constructor() {
-    this._list = {};
+    this._list = {} as TasksInterface;
   }
 
-  loadTasksFromArray(tasks = []) {
+  loadTasksFromArray(tasks: Task[] = []) {
     tasks.forEach((task) => {
       this._list[task.id] = task;
     });
@@ -33,7 +39,9 @@ class Tasks {
     this.listArray.forEach((task, index) => {
       const indexAdd = `${index + 1}`.green;
       const { description, completeIn } = task;
-      const state = completeIn ? "Complete".bgGreen : "Pending".bgRed;
+      const state = completeIn
+        ? colors.bgGreen("Complete")
+        : colors.bgRed("Pending");
       console.log(`${indexAdd} ${description} :: ${state}`);
     });
   }
@@ -47,14 +55,18 @@ class Tasks {
         if (completeIn) {
           counter += 1;
           console.log(
-            `${(counter + ".").green} ${description} :: ${completeIn.green}`
+            `${colors.green(
+              counter.toString()
+            )} ${description} :: ${colors.green(completeIn)}`
           );
         }
       } else {
         if (!completeIn) {
           counter += 1;
           console.log(
-            `${(counter + ".").green} ${description} :: ${completeIn}`
+            `${colors.green(
+              counter.toString()
+            )} ${description} :: ${completeIn}`
           );
         }
       }
@@ -62,14 +74,15 @@ class Tasks {
   }
 
   deleteTask(id = "") {
-    if (this._list[id]) {
-      delete this._list[id];
+    const idKey = id as keyof Task;
+    if (this._list[idKey]) {
+      delete this._list[idKey];
     }
   }
 
-  toggleCompleteds(ids = []) {
+  toggleCompleteds(ids: string[] = []) {
     ids.forEach((id) => {
-      const task = this._list[id];
+      const task = this._list[id as keyof Task] as unknown as Task;
       if (!task.completeIn) {
         task.completeIn = new Date().toISOString();
       }
@@ -77,10 +90,8 @@ class Tasks {
 
     this.listArray.forEach((task) => {
       if (!ids.includes(task.id)) {
-        this._list[task.id].completeIn = null;
+        this._list[task.id]!.completeIn = null;
       }
     });
   }
 }
-
-module.exports = Tasks;

@@ -1,17 +1,27 @@
-require("colors");
-const {
-  inquirerMenu,
+import colors from "colors";
+import {
+  confirmCreateTask,
   pause,
-  readInput,
+  showListCheckList,
   listTasksDelete,
   confirmDelete,
-  showListCheckList,
-} = require("./helpers/inquirer");
-const { saveDB, readDB } = require("./helpers/saveFile");
-const Tasks = require("./models/tasks");
+  inquirerMenu,
+  readInput,
+} from "./helpers/inquirer.ts";
+import { saveDB, readDB } from "./helpers/saveFile.ts";
+import { Tasks } from "./models/tasks.ts";
+
+process.on("uncaughtException", (error: { name: string }) => {
+  if (error instanceof Error && error.name === "ExitPromptError") {
+    console.log("👋 until next time!");
+  } else {
+    // Rethrow unknown errors
+    throw error;
+  }
+});
 
 const main = async () => {
-  let opt = "";
+  let opt: string;
   const tasks = new Tasks();
   const tasksDB = readDB();
 
@@ -25,7 +35,11 @@ const main = async () => {
     switch (opt) {
       case "1":
         const desc = await readInput("Description: ");
-        tasks.createTask(desc);
+        const confirm = await confirmCreateTask("Are you sure?");
+        if (confirm) {
+          tasks.createTask(desc);
+          console.log(colors.bgGreen(`Created Task ${desc}`));
+        }
         break;
 
       case "2":
@@ -52,7 +66,7 @@ const main = async () => {
           const confirm = await confirmDelete("Are you sure?");
           if (confirm) {
             tasks.deleteTask(id);
-            console.log("Delete task");
+            console.log(colors.bgRed(`Deleted Task with id ${id}`));
           }
         }
         break;

@@ -1,17 +1,29 @@
 {
   "name": "02-tasks-to-do",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/app.js",
+    "dev": "nodemon --no-stdin"
   },
   "keywords": [],
   "author": "Cesar Augusto Gonzalez Rojas",
   "license": "ISC",
   "dependencies": {
+    "@inquirer/prompts": "^8.0.1",
     "colors": "^1.4.0",
-    "inquirer": "^9.2.6",
-    "uuid": "^9.0.0"
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/colors": "^1.1.3",
+    "@types/node": "^24.10.1",
+    "nodemon": "^3.1.11",
+    "rimraf": "^6.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
